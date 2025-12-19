@@ -1,12 +1,15 @@
-""" Đề bài: Cho một chuỗi văn bản: text = "data science is cool but data cleaning is boring"
+"""
+Problem: Given a text string: text = "data science is cool but data cleaning is boring"
 
-Yêu cầu: Viết code trả về một Dictionary đếm số lần xuất hiện của từng từ. Input: Chuỗi trên. Output mong đợi: {'data': 2, 'science': 1, 'is': 2, 'cool': 1, 'but': 1, 'cleaning': 1, 'boring': 1} 
+Requirement: Write code that returns a dictionary counting the number of occurrences of each word.
+Input: The string above.
+Expected Output: {'data': 2, 'science': 1, 'is': 2, 'cool': 1, 'but': 1, 'cleaning': 1, 'boring': 1}
 """
 
 text = "data science is cool but data cleaning is boring"
 
 def count_words(text: str) -> dict[str, int]:
-    words = text.split()
+    words = text.split() #O(n)
     #words = ['data']
     word_counts = {word:words.count(word) for word in words}  #O(n^2)
     return word_counts
