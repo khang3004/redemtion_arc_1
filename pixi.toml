@@ -2,7 +2,7 @@
 authors = ["KhangDS&DL <gausseuler159357@gmail.com>"]
 channels = ["conda-forge"]
 name = "Code_FromZero2Hero"
-platforms = ["osx-arm64"]
+platforms = ["osx-arm64", "linux-aarch64"]
 version = "0.1.0"
 
 [tasks]
