@@ -1,1 +1,2 @@
 # REDEMPTION ARC PART 1
+#Code from ZERO2HERO (Fixed)
