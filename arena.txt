@@ -1,1 +1,2 @@
 Dòng 1: Khởi đầu bình yên
+Dòng 1.5: Sếp chèn ngang một dòng vào master
