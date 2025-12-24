@@ -1,3 +1,1 @@
-Dòng 1: Khởi đầu bình yên
-Dòng 1.5: Sếp chèn ngang một dòng vào master
-Line 2: Super cool feature
+Line 1: Master is The King
