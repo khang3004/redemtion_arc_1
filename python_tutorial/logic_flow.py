@@ -1,4 +1,4 @@
-score: int = 75
+score: int = 95
 
 if score >= 90:
     grade = 'A'
