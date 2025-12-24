@@ -1,32 +1,31 @@
 version: "3.8"
 
 services:
+  # ==========================================
+  # SERVICE 1: App Python
+  # ==========================================
   ai-brain:
     build: .
     volumes:
       - .:/app
       - brain-memory:/app/data
-
-    # -------------------------------------------------------
-    # THAY ĐỔI 1: MỞ CỔNG 8000
-    # Cấu trúc: "Cổng_Máy_Mac : Cổng_Trong_Container"
-    # -------------------------------------------------------
     ports:
       - "8000:8000"
-
-    # -------------------------------------------------------
-    # THAY ĐỔI 2: CHẠY SERVER THAY VÌ NGỦ ĐÔNG
-    # thay vì 'tail -f', ta chạy lệnh khởi động uvicorn server
-    # --host 0.0.0.0: Để nó chấp nhận kết nối từ bên ngoài (Máy Mac)
-    # --reload: Để khi bạn sửa code, server tự nhận diện và cập nhật
-    # -------------------------------------------------------
     command: pixi run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-
     environment:
       - DB_HOST=postgres_db
       - DB_USER=${POSTGRES_USER}
       - DB_PASS=${POSTGRES_PASSWORD}
 
+    # [SENIOR TRICK]: CHỜ ĐÈN XANH
+    # Chỉ khởi động App khi Database thực sự Healthy (Khỏe mạnh)
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+
+  # ==========================================
+  # SERVICE 2: Database PostgreSQL
+  # ==========================================
   postgres_db:
     image: postgres:15-alpine
     environment:
@@ -38,6 +37,17 @@ services:
     ports:
       - "5432:5432"
 
+    # [SENIOR TRICK]: TỰ KHÁM SỨC KHỎE
+    # Cứ 10s kiểm tra 1 lần xem DB đã nhận kết nối chưa
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # SERVICE 3: PgAdmin
+  # ==========================================
   pgadmin:
     image: dpage/pgadmin4
     environment:
@@ -45,6 +55,9 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASS}
     ports:
       - "8080:80"
+    depends_on:
+      postgres_db:
+        condition: service_healthy
 
 volumes:
   brain-memory:
