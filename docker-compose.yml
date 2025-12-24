@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  my-app:
+    build: .
+    volumes:
+      - .:/app
+
+    # KỸ THUẬT KEEP-ALIVE:
+    # Thay vì chạy python code rồi tắt, ta chạy lệnh "đọc file rỗng mãi mãi".
+    # Điều này giữ container luôn ở trạng thái "Running" background.
+    command: tail -f /dev/null
