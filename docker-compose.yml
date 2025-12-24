@@ -1,12 +1,51 @@
 version: "3.8"
 
 services:
-  my-app:
+  ai-brain:
     build: .
     volumes:
       - .:/app
+      - brain-memory:/app/data
 
-    # KỸ THUẬT KEEP-ALIVE:
-    # Thay vì chạy python code rồi tắt, ta chạy lệnh "đọc file rỗng mãi mãi".
-    # Điều này giữ container luôn ở trạng thái "Running" background.
-    command: tail -f /dev/null
+    # -------------------------------------------------------
+    # THAY ĐỔI 1: MỞ CỔNG 8000
+    # Cấu trúc: "Cổng_Máy_Mac : Cổng_Trong_Container"
+    # -------------------------------------------------------
+    ports:
+      - "8000:8000"
+
+    # -------------------------------------------------------
+    # THAY ĐỔI 2: CHẠY SERVER THAY VÌ NGỦ ĐÔNG
+    # thay vì 'tail -f', ta chạy lệnh khởi động uvicorn server
+    # --host 0.0.0.0: Để nó chấp nhận kết nối từ bên ngoài (Máy Mac)
+    # --reload: Để khi bạn sửa code, server tự nhận diện và cập nhật
+    # -------------------------------------------------------
+    command: pixi run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+    environment:
+      - DB_HOST=postgres_db
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
+
+  postgres_db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-storage:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASS}
+    ports:
+      - "8080:80"
+
+volumes:
+  brain-memory:
+  db-storage:
